@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+
+<h1>Your Cart</h1>
+
+<% if (cart.length === 0) { %>
+    <p>Your cart is empty.</p>
+<% } else { %>
+
+    <% cart.forEach(item => { %>
+        <div class="cart-item">
+            <img src="<%= item.product.image %>">
+            <div>
+                <h3><%= item.product.name %></h3>
+                <p>₹ <%= item.product.price %></p>
+                <p>Quantity: <%= item.quantity %></p>
+            </div>
+        </div>
+    <% }) %>
+
+<% } %>
+
+<a href="/products" class="back-link">← Continue Shopping</a>
+
+</body>
+</html>

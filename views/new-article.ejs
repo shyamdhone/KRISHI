@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Create Article</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background:#f5f5f5;
+padding:40px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:8px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+h2{
+margin-bottom:20px;
+}
+
+label{
+font-weight:bold;
+}
+
+input, textarea, select{
+width:100%;
+padding:10px;
+margin-top:5px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+margin-top:20px;
+padding:12px 20px;
+background:#28a745;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#218838;
+}
+
+.checkbox{
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Create New Article</h2>
+
+<form action="/admin/articles" method="POST">
+
+<label>Title</label>
+<input type="text" name="title" placeholder="Article Title" required>
+
+<br><br>
+
+<label>Description</label>
+<textarea name="description" rows="3" placeholder="Short summary for homepage..." required></textarea>
+
+<br><br>
+
+<label>Image URL</label>
+<input type="text" name="image" placeholder="Paste article image URL">
+
+<br><br>
+
+<label>Category</label>
+<select name="category">
+<option value="">Select Category</option>
+<option value="Farming">Farming</option>
+<option value="Technology">Technology</option>
+<option value="Government Schemes">Government Schemes</option>
+<option value="Crop Guide">Crop Guide</option>
+</select>
+
+<br><br>
+
+<label>Content</label>
+<textarea name="content" rows="10" placeholder="Write the full article..." required></textarea>
+
+<br><br>
+
+<div class="checkbox">
+<label>
+<input type="checkbox" name="isTop">
+ Mark as Top Article
+</label>
+</div>
+
+<br>
+
+<button type="submit">Publish Article</button>
+
+</form>
+
+</div>
+
+</body>
+
+</html>

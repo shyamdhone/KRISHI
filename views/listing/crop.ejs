@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CropSphere | Smart Recommendations</title>
+
+<link rel="stylesheet" href="/css/crop.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="main-wrapper">
+
+<header class="header" data-aos="fade-down">
+<h1>Crop<span>Sphere</span></h1>
+<p>AI-powered soil analysis for precision farming</p>
+</header>
+
+<section class="form-container" data-aos="fade-up">
+<form id="cropForm" class="glass-card">
+
+<div class="input-grid">
+
+<div class="input-group full">
+<label>Location (District)</label>
+<select name="district" required>
+<option value="">Select District</option>
+<% districts.forEach(d => { %>
+<option value="<%= d.district %>"><%= d.district %></option>
+<% }) %>
+</select>
+</div>
+
+<div class="input-group">
+<label>Nitrogen (N)</label>
+<input type="number" name="nitrogen" placeholder="mg/kg" required>
+</div>
+
+<div class="input-group">
+<label>Phosphorus (P)</label>
+<input type="number" name="phosphorus" placeholder="mg/kg" required>
+</div>
+
+<div class="input-group">
+<label>Potassium (K)</label>
+<input type="number" name="potassium" placeholder="mg/kg" required>
+</div>
+
+<div class="input-group">
+<label>Soil pH</label>
+<input type="number" step="0.1" name="ph" placeholder="0-14" required>
+</div>
+
+</div>
+
+<button type="submit" class="submit-btn">Analyze Soil Data</button>
+
+</form>
+</section>
+
+<div class="loading" id="loading">
+<div class="spinner"></div>
+<p>Analyzing soil data using AI...</p>
+</div>
+
+<div class="results-grid" id="resultsGrid" style="display:none">
+
+<div class="tile tile-soil-score" data-aos="zoom-in">
+<p class="tile-label">Soil Health Score</p>
+<div class="health-score"><span id="healthValue">0</span><small>/100</small></div>
+<p id="healthStatus"></p>
+</div>
+
+<div class="tile tile-chart" data-aos="zoom-in" data-aos-delay="100">
+<p class="tile-label">Nutrient Composition</p>
+<div class="chart-container">
+<canvas id="npkChart"></canvas>
+</div>
+</div>
+
+<div class="tile tile-best-match" data-aos="fade-up" id="bestCropTile">
+<div id="bestCrop"></div>
+</div>
+
+<div class="tile tile-tips" data-aos="fade-up">
+<h3 style="margin-bottom:15px">🌱 Farming Advice</h3>
+<ul id="tipsList" class="tips-list"></ul>
+</div>
+
+<div class="columns-container">
+
+<div class="column">
+<h3 class="col-title">🌾 Best Crops</h3>
+<div id="cropCards" class="card-stack"></div>
+</div>
+
+<div class="column">
+<h3 class="col-title">🍎 Best Fruits</h3>
+<div id="fruitCards" class="card-stack"></div>
+</div>
+
+<div class="column">
+<h3 class="col-title">🥕 Best Vegetables</h3>
+<div id="vegetableCards" class="card-stack"></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+
+AOS.init({ duration:800, once:true });
+
+const form = document.getElementById("cropForm");
+const loading = document.getElementById("loading");
+const resultsGrid = document.getElementById("resultsGrid");
+
+let npkChart;
+
+const ITEMS_PER_PAGE = 3;
+
+form.addEventListener("submit", async (e)=>{
+
+e.preventDefault();
+
+const formData = new FormData(form);
+const data = Object.fromEntries(formData);
+
+loading.style.display="block";
+resultsGrid.style.display="none";
+
+try{
+
+const res = await fetch("/crop/data",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+});
+
+const result = await res.json();
+
+loading.style.display="none";
+resultsGrid.style.display="grid";
+
+renderSoilHealth(data);
+renderChart(data);
+renderResults(result,data.district);
+renderTips(data);
+
+setTimeout(()=>resultsGrid.scrollIntoView({behavior:"smooth"}),300);
+
+}catch(err){
+
+alert("Error analyzing data: "+err.message);
+loading.style.display="none";
+
+}
+
+});
+
+function renderSoilHealth(data){
+
+let score=70;
+const ph=parseFloat(data.ph);
+
+if(ph>=6 && ph<=7) score+=10;
+if(data.nitrogen>40) score+=5;
+if(data.phosphorus>40) score+=5;
+if(data.potassium>40) score+=5;
+
+score=Math.min(score,100);
+
+document.getElementById("healthValue").innerText=score;
+
+let status="Average Soil";
+let color="#f59e0b";
+
+if(score>85){status="Excellent Soil";color="#10b981";}
+else if(score>70){status="Good Soil";color="#3b82f6";}
+
+const statusEl=document.getElementById("healthStatus");
+statusEl.innerText=status;
+statusEl.style.color=color;
+
+}
+
+function renderChart(data){
+
+const ctx=document.getElementById("npkChart");
+
+if(npkChart) npkChart.destroy();
+
+npkChart=new Chart(ctx,{
+type:"bar",
+data:{
+labels:["Nitrogen","Phosphorus","Potassium"],
+datasets:[{
+data:[data.nitrogen,data.phosphorus,data.potassium],
+backgroundColor:["#10b981","#3b82f6","#f59e0b"],
+borderRadius:10
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{legend:{display:false}}
+}
+});
+
+}
+
+function createImage(imagePath){
+
+const img=document.createElement("img");
+
+img.src=imagePath+".jpg";
+
+img.onerror=function(){
+this.onerror=null;
+this.src=imagePath+".png";
+};
+
+img.className="crop-image";
+img.loading="lazy";
+
+return img;
+
+}
+
+async function renderColumn(items,container,district,type,page=1){
+
+container.innerHTML="";
+
+if(!items || items.length===0) return;
+
+const start=(page-1)*ITEMS_PER_PAGE;
+const end=start+ITEMS_PER_PAGE;
+
+const visibleItems=items.slice(start,end);
+
+for(const item of visibleItems){
+
+const matchClass=item.matchPercentage>=85 ? "high" : item.matchPercentage>=65 ? "med" : "low";
+
+const imageName=item.name.toLowerCase().replace(/\s+/g,"-");
+
+let folder=type;
+
+if(type==="vegetables") folder="vegitables";
+
+const imagePath=`/images/${folder}/${imageName}`;
+
+const card=document.createElement("div");
+card.className="crop-card";
+
+const img=createImage(imagePath);
+
+card.appendChild(img);
+
+const content=document.createElement("div");
+
+content.innerHTML=`
+
+<div class="card-header">
+<span class="tag tag-${matchClass}">
+${item.matchPercentage}% Match
+</span>
+</div>
+
+<h3>${item.name}</h3>
+
+<div class="card-meta">
+<span>⏱ ${item.days} Days</span>
+<span>⚗️ pH ${item.minPH}-${item.maxPH}</span>
+</div>
+
+<button class="action-btn" onclick="window.location.href='/district/${district}'">
+Market Trend →
+</button>
+
+`;
+
+card.appendChild(content);
+
+container.appendChild(card);
+
+}
+
+if(end<items.length){
+
+const btn=document.createElement("button");
+
+btn.innerText="Load More";
+btn.className="load-more-btn";
+
+btn.onclick=()=>renderColumn(items,container,district,type,page+1);
+
+container.appendChild(btn);
+
+}
+
+}
+
+async function renderResults(data,district){
+
+await renderColumn(data.crops,document.getElementById("cropCards"),district,"crops");
+
+await renderColumn(data.fruits,document.getElementById("fruitCards"),district,"fruits");
+
+await renderColumn(data.vegetables,document.getElementById("vegetableCards"),district,"vegetables");
+
+if(data.crops && data.crops.length>0){
+
+const best=data.crops[0];
+
+const imageName=best.name.toLowerCase().replace(/\s+/g,"-");
+
+const imagePath=`/images/crops/${imageName}`;
+
+const bestDiv=document.getElementById("bestCrop");
+
+bestDiv.innerHTML=`
+
+<div class="best-badge">TOP MATCH</div>
+
+<h2>${best.name}</h2>
+
+<p>Perfectly suited for your soil nutrients.</p>
+
+<div class="best-stats">
+<span>Yield: High</span> |
+<span>Difficulty: ${best.days>130?"Hard":"Moderate"}</span>
+</div>
+
+`;
+
+const img=createImage(imagePath);
+
+img.style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin-bottom:10px";
+
+bestDiv.prepend(img);
+
+}
+
+}
+
+function renderTips(data){
+
+const tips=[];
+
+if(data.nitrogen<40)
+tips.push("Apply Urea or Nitrogen fertilizer.");
+
+if(data.ph<6)
+tips.push("Soil acidic. Add lime.");
+
+if(data.ph>7.5)
+tips.push("Soil alkaline. Add sulfur.");
+
+tips.push("Practice crop rotation.");
+
+document.getElementById("tipsList").innerHTML=tips.map(t=>`<li>${t}</li>`).join("");
+
+}
+
+</script>
+
+</body>
+</html>

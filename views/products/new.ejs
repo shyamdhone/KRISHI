@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product</title>
+    <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Add New Agricultural Product</h2>
+
+    <form action="/products" method="POST" class="product-form">
+
+        <!-- Basic Info -->
+        <div class="form-section">
+            <h3>Basic Information</h3>
+
+            <label>Product Name</label>
+            <input type="text" name="product[name]" required>
+
+            <label>Price (₹)</label>
+            <input type="number" name="product[price]" required>
+
+            <label>Category</label>
+            <input type="text" name="product[category]">
+
+            <label>Stock Quantity</label>
+            <input type="number" name="product[stock]">
+        </div>
+
+        <!-- Image -->
+        <div class="form-section">
+            <h3>Product Image</h3>
+
+            <label>Image URL</label>
+            <input type="text" name="product[image]" placeholder="Paste image link here">
+        </div>
+
+        <!-- Description -->
+        <div class="form-section">
+            <h3>Description</h3>
+
+            <label>Product Description</label>
+            <textarea name="product[description]" rows="4"></textarea>
+        </div>
+
+        <!-- Agriculture Details -->
+        <div class="form-section">
+            <h3>Agricultural Details</h3>
+
+            <label>Components (comma separated)</label>
+            <input type="text" name="product[components]" 
+                   placeholder="Nitrogen, Phosphorus, Potassium">
+
+            <label>Suitable Soil Types (comma separated)</label>
+            <input type="text" name="product[soilType]" 
+                   placeholder="Loamy, Sandy, Clay">
+
+            <label>Soil pH Range</label>
+            <input type="text" name="product[soilPH]" 
+                   placeholder="5.5 - 7.5">
+
+            <label>Suitable Crops (comma separated)</label>
+            <input type="text" name="product[suitableCrops]" 
+                   placeholder="Wheat, Rice, Cotton">
+        </div>
+
+        <button type="submit" class="submit-btn">Add Product</button>
+
+    </form>
+
+    <a href="/products" class="back-link">← Back to Products</a>
+</div>
+
+</body>
+</html>

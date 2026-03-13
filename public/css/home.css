@@ -1,0 +1,319 @@
+/* --- Variables & Core Setup --- */
+:root {
+  --primary: #10b981;        /* Modern Emerald */
+  --primary-glow: rgba(16, 185, 129, 0.2);
+  --secondary: #064e3b;      /* Deep Forest */
+  --accent: #f59e0b;         /* Harvest Gold */
+  --bg-light: #f8fafc;       /* Off-white Slate */
+  --text-dark: #0f172a;      /* Navy-Black */
+  --text-muted: #64748b;     /* Slate Gray */
+  --white: #ffffff;
+  --radius-lg: 24px;
+  --radius-md: 12px;
+  --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* --- Layout Components --- */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 8%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.logo span {
+  color: var(--primary);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.nav-links a:not(.nav-btn):hover {
+  color: var(--primary);
+}
+
+.nav-btn {
+  background: var(--primary);
+  color: var(--white) !important;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+/* --- Hero: Glassmorphism Effect --- */
+
+.hero {
+  min-height: 85vh;
+  background: 
+    linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)),
+    url('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=2000');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.hero-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4rem 2rem;
+  border-radius: var(--radius-lg);
+  max-width: 850px;
+  text-align: center;
+  color: var(--white);
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 5vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1.5px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 1rem 2rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--text-dark);
+}
+
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px var(--primary-glow); }
+
+/* --- Features Grid --- */
+
+.features {
+  padding: 6rem 8%;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 4rem;
+}
+
+.feature-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  background: var(--white);
+  padding: 3rem 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0,0,0,0.03);
+  transition: var(--transition);
+  height: 100%;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-12px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  background: var(--bg-light);
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  margin-bottom: 1.5rem;
+}
+
+.card-btn {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- How It Works --- */
+
+.how-it-works {
+  background: var(--secondary);
+  color: var(--white);
+  padding: 6rem 8%;
+  text-align: center;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  margin-top: 4rem;
+}
+
+.step-icon {
+  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+}
+
+/* --- Profile Dropdown --- */
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-icon {
+  background: #f1f5f9;
+  padding: 0.5rem;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.profile-menu:hover .profile-icon {
+  border-color: var(--primary);
+}
+
+.dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: none;
+  min-width: 240px;
+  border: 1px solid #f1f5f9;
+}
+
+.profile-menu:hover .dropdown {
+  display: block;
+}
+
+/* --- Footer --- */
+
+.footer {
+  padding: 5rem 8% 2rem;
+  background: var(--white);
+  border-top: 1px solid #f1f5f9;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+.footer-logo {
+  max-width: 300px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 3rem;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.copyright {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* --- Mobile Responsiveness --- */
+
+@media (max-width: 768px) {
+  .nav-links { display: none; } /* Add a mobile menu logic if needed */
+  .hero-glass { padding: 2rem 1rem; }
+  .section-title { font-size: 1.8rem; }
+}

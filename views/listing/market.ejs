@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>District Market Prices</title>
+
+  <!-- CSS -->
+
+  <link rel="stylesheet" href="/css/market.css">
+
+  <!-- AOS Animation -->
+
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <!-- Chart.js -->
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Google Font -->
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="market-container">
+
+  <!-- Header -->
+
+  <header class="market-header" data-aos="fade-down">
+    <h1>📊 District Market Prices</h1>
+    <p>Check mandi prices by district and crop</p>
+  </header>
+
+  <!-- Search Form -->
+
+  <form class="market-form" method="GET" action="/market" data-aos="fade-up">
+
+```
+<input
+  type="text"
+  name="district"
+  placeholder="District (e.g. Pune)"
+  value="<%= district || '' %>"
+  required
+/>
+
+<input
+  type="text"
+  name="crop"
+  placeholder="Crop (e.g. Onion)"
+  value="<%= crop || '' %>"
+  required
+/>
+
+<button type="submit">Search</button>
+```
+
+  </form>
+
+  <!-- Error Message -->
+
+<% if (error) { %> <div class="error-box">
+<%= error %> </div>
+<% } %>
+
+  <!-- Market Data -->
+
+<% if (marketData && marketData.length > 0) { %>
+
+  <!-- Table -->
+
+  <div class="table-wrapper" data-aos="fade-up">
+
+```
+<table>
+  <thead>
+    <tr>
+      <th>Mandi</th>
+      <th>Arrival Date</th>
+      <th>Min Price (₹)</th>
+      <th>Max Price (₹)</th>
+      <th>Modal Price (₹)</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% marketData.forEach(item => { %>
+      <tr>
+        <td><%= item.market %></td>
+        <td><%= item.arrival_date %></td>
+        <td><%= item.min_price %></td>
+        <td><%= item.max_price %></td>
+        <td><%= item.modal_price %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+
+</table>
+```
+
+  </div>
+
+  <!-- Chart -->
+
+  <div class="chart-box" data-aos="zoom-in">
+    <canvas id="priceChart"></canvas>
+  </div>
+
+<% } else if (!error) { %>
+
+```
+<p class="no-data">
+  No market data available. Try another crop or district.
+</p>
+```
+
+<% } %>
+
+</div>
+
+<!-- Chart Script -->
+
+<% if (marketData && marketData.length > 0) { %>
+
+<script>
+
+const rawData = <%- JSON.stringify(marketData) %>;
+
+// Remove rows with missing prices
+const cleanedData = rawData.filter(item =>
+  item.min_price && item.max_price && item.modal_price
+);
+
+const labels = cleanedData.map(item => item.market);
+
+const minPrices = cleanedData.map(item => parseInt(item.min_price));
+const maxPrices = cleanedData.map(item => parseInt(item.max_price));
+const modalPrices = cleanedData.map(item => parseInt(item.modal_price));
+
+const ctx = document.getElementById("priceChart").getContext("2d");
+
+new Chart(ctx, {
+
+  type: "line",
+
+  data: {
+    labels: labels,
+
+    datasets: [
+
+      {
+        label: "Min Price",
+        data: minPrices,
+        borderColor: "#4CAF50",
+        backgroundColor: "rgba(76,175,80,0.15)",
+        tension: 0.3,
+        fill: true
+      },
+
+      {
+        label: "Max Price",
+        data: maxPrices,
+        borderColor: "#FF9800",
+        backgroundColor: "rgba(255,152,0,0.15)",
+        tension: 0.3,
+        fill: true
+      },
+
+      {
+        label: "Modal Price",
+        data: modalPrices,
+        borderColor: "#2196F3",
+        backgroundColor: "rgba(33,150,243,0.15)",
+        tension: 0.3,
+        fill: true
+      }
+
+    ]
+  },
+
+  options: {
+
+    responsive: true,
+
+    animation: {
+      duration: 1500,
+      easing: "easeOutQuart"
+    },
+
+    plugins: {
+      legend: {
+        position: "top"
+      }
+    },
+
+    scales: {
+
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Price (₹)"
+        }
+      },
+
+      x: {
+        title: {
+          display: true,
+          text: "Market"
+        }
+      }
+
+    }
+
+  }
+
+});
+
+</script>
+
+<% } %>
+
+<!-- AOS Script -->
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+AOS.init({
+  duration: 900,
+  once: true,
+  easing: "ease-out-cubic"
+});
+</script>
+
+</body>
+</html>

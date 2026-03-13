@@ -1,0 +1,17 @@
+<h1>Admin Dashboard</h1>
+
+<a href="/admin/articles/new">Add New Article</a>
+
+<hr>
+
+<% articles.forEach(article => { %>
+
+<h3><%= article.title %></h3>
+
+<a href="/articles/<%= article._id %>">View</a>
+<a href="/admin/articles/edit/<%= article._id %>">Edit</a>
+<a href="/admin/articles/delete/<%= article._id %>">Delete</a>
+
+<hr>
+
+<% }) %>

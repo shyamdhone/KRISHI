@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>WeatherSphere | Real-Time Weather</title>
+
+<link rel="stylesheet" href="/css/weather.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+</head>
+
+<body class="<%= (weather && weather.main) ? weather.main.toLowerCase() : 'default' %>">
+
+<div class="weather-container">
+
+<header class="weather-header">
+<h1>Weather<span>Sphere</span></h1>
+<p>Smart weather insights for your city</p>
+</header>
+
+
+<div class="favorite-box">
+<h3>Saved Cities</h3>
+<div id="favoriteCities"></div>
+</div>
+
+
+<div class="search-section">
+
+<form class="weather-form" action="/weather" method="GET">
+
+<div class="input-group">
+
+<input
+type="text"
+name="city"
+placeholder="Search any city..."
+required
+>
+
+<button type="button" class="loc-btn" onclick="askLocation()">📍</button>
+
+</div>
+
+<button type="submit" class="submit-btn">
+Check Weather
+</button>
+
+</form>
+
+</div>
+
+
+<% if (error) { %>
+
+<div class="error-box">
+⚠️ <%= error %>
+</div>
+
+<% } %>
+
+
+<% if (weather) { %>
+
+<div class="weather-card">
+
+<div class="location">
+
+<h2 id="cityName"><%= weather.city %></h2>
+
+<p id="current-date"></p>
+
+<button onclick="saveCity()" class="fav-btn">
++ Save City
+</button>
+
+</div>
+
+
+<div class="temp-display">
+
+<img
+src="https://openweathermap.org/img/wn/<%= weather.icon %>@4x.png"
+class="weather-icon-large"
+/>
+
+<div class="temp-value">
+<%= Math.round(weather.temp) %>°
+</div>
+
+</div>
+
+
+<p class="description">
+<%= weather.description %>
+</p>
+
+
+<div class="weather-stats">
+
+<div class="stat">
+
+<p>Humidity</p>
+
+<strong><%= weather.humidity %>%</strong>
+
+</div>
+
+
+<div class="stat">
+
+<p>Wind Speed</p>
+
+<strong><%= weather.wind %> km/h</strong>
+
+</div>
+
+
+<div class="stat">
+
+<p>Feels Like</p>
+
+<strong><%= Math.round(weather.feels_like) %>°</strong>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<h3 class="forecast-title">4 Day Forecast</h3>
+
+<div class="forecast-grid">
+
+<% forecast.forEach(day => { %>
+
+<div class="forecast-card">
+
+<p class="date"><%= day.date %></p>
+
+<img src="https://openweathermap.org/img/wn/<%= day.icon %>@2x.png">
+
+<p class="temp"><%= Math.round(day.temp) %>°</p>
+
+<p class="desc"><%= day.description %></p>
+
+</div>
+
+<% }) %>
+
+</div>
+
+<% } %>
+
+</div>
+
+
+
+<script>
+
+const dateOptions = { weekday:'long', month:'long', day:'numeric' };
+
+const dateEl = document.getElementById('current-date');
+
+if(dateEl){
+
+dateEl.textContent =
+new Date().toLocaleDateString('en-US', dateOptions);
+
+}
+
+
+function askLocation(){
+
+if(navigator.geolocation){
+
+navigator.geolocation.getCurrentPosition((pos)=>{
+
+window.location.href =
+`/weather?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`;
+
+});
+
+}
+
+}
+
+
+
+function saveCity(){
+
+const city =
+document.getElementById("cityName").innerText;
+
+let fav =
+JSON.parse(localStorage.getItem("favCities")) || [];
+
+if(!fav.includes(city)){
+
+fav.push(city);
+
+localStorage.setItem("favCities", JSON.stringify(fav));
+
+}
+
+loadFav();
+
+}
+
+
+
+function loadFav(){
+
+const container =
+document.getElementById("favoriteCities");
+
+if(!container) return;
+
+container.innerHTML = "";
+
+let fav =
+JSON.parse(localStorage.getItem("favCities")) || [];
+
+fav.forEach(city=>{
+
+let btn=document.createElement("button");
+
+btn.innerText=city;
+
+btn.onclick=()=>{
+
+window.location.href=`/weather?city=${city}`;
+
+};
+
+container.appendChild(btn);
+
+});
+
+}
+
+loadFav();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Products</title>
+    <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+
+<h2>All Products</h2>
+
+<div class="product-container">
+
+<% products.forEach(product => { %>
+
+    <div class="product-card">
+
+        <img src="<%= product.image %>" width="200">
+
+        <h3><%= product.name %></h3>
+        <p>₹ <%= product.price %></p>
+
+        <!-- IMPORTANT: No anchor wrapping anything -->
+
+        <form action="/buy-now/<%= product._id %>" method="POST">
+            <button type="submit">Buy Now</button>
+        </form>
+
+    </div>
+
+<% }) %>
+
+</div>
+
+</body>
+</html>

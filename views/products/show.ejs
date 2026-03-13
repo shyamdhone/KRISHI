@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= product.name %></title>
+    <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+
+<div class="product-page">
+
+    <div class="product-image">
+        <img src="<%= product.image %>" alt="<%= product.name %>">
+    </div>
+
+    <div class="product-info">
+
+        <h1><%= product.name %></h1>
+        <p class="price">₹ <%= product.price %></p>
+
+        <div class="description-section">
+            <h3>Description</h3>
+            <p><%= product.description %></p>
+
+            <div class="product-specs">
+                <p><strong>Components:</strong> <%= product.components %></p>
+                <p><strong>Soil Type:</strong> <%= product.soilType %></p>
+                <p><strong>Soil pH:</strong> <%= product.soilPH %></p>
+            </div>
+        </div>
+
+        <!-- ✅ WORKING ADD TO CART -->
+        <form action="/cart/add/<%= product._id %>" method="POST" class="button-group">
+            <button type="submit" class="add-btn">Add to Cart</button>
+            <button type="button" class="buy-btn">Buy Now</button>
+        </form>
+
+    </div>
+
+    <a href="/products" class="back-link">← Back</a>
+
+</div>
+
+</body>
+</html>

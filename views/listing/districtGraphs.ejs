@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+
+<title><%= district.district %> Market Trends</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:'Inter',sans-serif;
+background:#f6f9fc;
+margin:0;
+padding:40px;
+}
+
+.page-title{
+text-align:center;
+font-size:34px;
+font-weight:700;
+margin-bottom:40px;
+}
+
+.section{
+max-width:1100px;
+margin:auto;
+margin-bottom:50px;
+}
+
+.section h2{
+margin-bottom:20px;
+font-size:24px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+border-radius:14px;
+padding:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+text-decoration:none;
+color:black;
+transition:0.25s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 15px 35px rgba(0,0,0,0.12);
+}
+
+.card h3{
+margin:0;
+margin-bottom:8px;
+font-size:20px;
+}
+
+.card p{
+margin:0;
+font-size:14px;
+color:#666;
+}
+
+.no-data{
+color:#888;
+font-size:15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1 class="page-title">
+📊 <%= district.district %> Market Trends
+</h1>
+
+
+<!-- ================= CROPS ================= -->
+
+<div class="section">
+
+<h2>🌾 Top Crops</h2>
+
+<div class="grid">
+
+<% if(district.crops && district.crops.length > 0){ %>
+
+<% district.crops.slice(0,3).forEach(crop=>{ %>
+
+<a class="card" href="/trend/<%= district.district %>/crop/<%= encodeURIComponent(crop.name) %>">
+
+<h3><%= crop.name %></h3>
+
+<p>Click to view price trend</p>
+
+</a>
+
+<% }) %>
+
+<% } else { %>
+
+<p class="no-data">No crop data available</p>
+
+<% } %>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= VEGETABLES ================= -->
+
+<div class="section">
+
+<h2>🥕 Top Vegetables</h2>
+
+<div class="grid">
+
+<% if(district.vegetables && district.vegetables.length > 0){ %>
+
+<% district.vegetables.slice(0,3).forEach(v=>{ %>
+
+<a class="card" href="/trend/<%= district.district %>/veg/<%= encodeURIComponent(v.name) %>">
+
+<h3><%= v.name %></h3>
+
+<p>Click to view price trend</p>
+
+</a>
+
+<% }) %>
+
+<% } else { %>
+
+<p class="no-data">No vegetable data available</p>
+
+<% } %>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= FRUITS ================= -->
+
+<div class="section">
+
+<h2>🍎 Top Fruits</h2>
+
+<div class="grid">
+
+<% if(district.fruits && district.fruits.length > 0){ %>
+
+<% district.fruits.slice(0,3).forEach(f=>{ %>
+
+<a class="card" href="/trend/<%= district.district %>/fruit/<%= encodeURIComponent(f.name) %>">
+
+<h3><%= f.name %></h3>
+
+<p>Click to view price trend</p>
+
+</a>
+
+<% }) %>
+
+<% } else { %>
+
+<p class="no-data">No fruit data available</p>
+
+<% } %>
+
+</div>
+
+</div>
+
+
+</body>
+</html>
