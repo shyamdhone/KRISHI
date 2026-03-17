@@ -14,7 +14,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
 const Order = require("./models/order");
-const Product = require("./models/Product");
+const Product = require("./models/product");
 const User = require("./models/User");
 const District = require("./models/district");
 const app = express();
