@@ -13,7 +13,7 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
-const Order = require("./models/Order");
+const Order = require("./models/order");
 const Product = require("./models/Product");
 const User = require("./models/User");
 const District = require("./models/district");
