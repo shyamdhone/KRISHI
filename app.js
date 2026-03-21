@@ -21,9 +21,9 @@ const app = express();
 
 // ================= DATABASE =================
 mongoose
-  .connect("mongodb://127.0.0.1:27017/krishiApp")
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ MongoDB error:", err));
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch(err => console.error("❌ MongoDB Error:", err));
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
