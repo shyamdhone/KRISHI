@@ -1,6 +1,6 @@
 require("dotenv").config();
 const Article = require("./models/article");
-
+const cropDatabase = require("./data/crop");
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 const nodemailer = require("nodemailer");
@@ -237,120 +237,8 @@ app.get("/admin/articles/new", isAdmin, (req, res) => {
   res.render("new-article");
 });
 // ================= CROP PAGE =================
-app.get("/crop", isLoggedIn, async (req, res) => {
-  try {
-    const districts = await District.find({}, { district: 1, _id: 0 });
 
-    res.render("listing/crop", {
-      districts
-    });
-  } catch (err) {
-    console.error(err);
-    res.send("Failed to load crop page");
-  }
-});
-const cropDatabase = [
 
-/* ================= CROPS (30) ================= */
-
-{ name:"Wheat", type:"crop", minPH:6.0, maxPH:7.0, minN:50, minP:30, minK:30, days:120 },
-{ name:"Rice", type:"crop", minPH:5.5, maxPH:6.5, minN:42, minP:25, minK:28, days:150 },
-{ name:"Maize", type:"crop", minPH:5.8, maxPH:7.2, minN:47, minP:32, minK:35, days:100 },
-{ name:"Barley", type:"crop", minPH:6.2, maxPH:7.5, minN:45, minP:29, minK:33, days:110 },
-{ name:"Millet", type:"crop", minPH:5.0, maxPH:6.5, minN:38, minP:22, minK:26, days:95 },
-{ name:"Sorghum", type:"crop", minPH:5.5, maxPH:7.0, minN:44, minP:28, minK:31, days:105 },
-{ name:"Cotton", type:"crop", minPH:6.0, maxPH:7.5, minN:60, minP:35, minK:45, days:180 },
-{ name:"Sugarcane", type:"crop", minPH:6.2, maxPH:7.8, minN:65, minP:40, minK:50, days:300 },
-{ name:"Groundnut", type:"crop", minPH:6.3, maxPH:7.0, minN:36, minP:24, minK:27, days:115 },
-{ name:"Soybean", type:"crop", minPH:6.0, maxPH:7.2, minN:41, minP:26, minK:30, days:100 },
-{ name:"Mustard", type:"crop", minPH:5.8, maxPH:6.8, minN:39, minP:23, minK:29, days:90 },
-{ name:"Sunflower", type:"crop", minPH:6.5, maxPH:7.5, minN:46, minP:30, minK:36, days:95 },
-{ name:"Pulses", type:"crop", minPH:6.0, maxPH:7.0, minN:34, minP:20, minK:25, days:85 },
-{ name:"Lentil", type:"crop", minPH:5.5, maxPH:6.8, minN:37, minP:22, minK:26, days:95 },
-{ name:"Chickpea", type:"crop", minPH:6.2, maxPH:7.2, minN:43, minP:27, minK:32, days:100 },
-{ name:"Peas", type:"crop", minPH:6.0, maxPH:7.0, minN:35, minP:21, minK:28, days:80 },
-{ name:"Oats", type:"crop", minPH:5.5, maxPH:6.5, minN:40, minP:24, minK:29, days:100 },
-{ name:"Ragi", type:"crop", minPH:5.0, maxPH:6.2, minN:33, minP:19, minK:24, days:90 },
-{ name:"Jowar", type:"crop", minPH:5.7, maxPH:6.9, minN:41, minP:25, minK:30, days:95 },
-{ name:"Tea", type:"crop", minPH:4.5, maxPH:5.5, minN:55, minP:30, minK:40, days:365 },
-{ name:"Coffee", type:"crop", minPH:5.0, maxPH:6.0, minN:52, minP:28, minK:38, days:320 },
-{ name:"Rubber", type:"crop", minPH:4.8, maxPH:6.2, minN:48, minP:26, minK:35, days:400 },
-{ name:"Tobacco", type:"crop", minPH:5.5, maxPH:6.5, minN:44, minP:27, minK:34, days:110 },
-{ name:"Coriander Seed", type:"crop", minPH:6.0, maxPH:7.0, minN:31, minP:18, minK:22, days:85 },
-{ name:"Fenugreek", type:"crop", minPH:6.3, maxPH:7.2, minN:36, minP:23, minK:27, days:75 },
-{ name:"Flax", type:"crop", minPH:6.0, maxPH:7.5, minN:39, minP:24, minK:30, days:95 },
-{ name:"Sesame", type:"crop", minPH:5.5, maxPH:6.8, minN:37, minP:21, minK:26, days:100 },
-{ name:"Hemp", type:"crop", minPH:6.0, maxPH:7.5, minN:50, minP:30, minK:37, days:120 },
-{ name:"Quinoa", type:"crop", minPH:6.0, maxPH:7.0, minN:42, minP:26, minK:31, days:95 },
-{ name:"Buckwheat", type:"crop", minPH:5.5, maxPH:6.5, minN:38, minP:22, minK:28, days:85 },
-
-/* ================= FRUITS (30) ================= */
-
-{ name:"Mango", type:"fruit", minPH:5.5, maxPH:7.5, minN:40, minP:20, minK:40, days:365 },
-{ name:"Banana", type:"fruit", minPH:5.8, maxPH:7.2, minN:60, minP:30, minK:50, days:300 },
-{ name:"Apple", type:"fruit", minPH:6.0, maxPH:7.0, minN:45, minP:35, minK:40, days:240 },
-{ name:"Orange", type:"fruit", minPH:5.5, maxPH:6.5, minN:44, minP:28, minK:42, days:250 },
-{ name:"Grapes", type:"fruit", minPH:6.0, maxPH:7.0, minN:50, minP:30, minK:45, days:200 },
-{ name:"Pineapple", type:"fruit", minPH:4.5, maxPH:5.5, minN:48, minP:25, minK:35, days:210 },
-{ name:"Papaya", type:"fruit", minPH:5.5, maxPH:6.7, minN:46, minP:26, minK:38, days:180 },
-{ name:"Guava", type:"fruit", minPH:5.0, maxPH:6.5, minN:43, minP:24, minK:36, days:220 },
-{ name:"Pomegranate", type:"fruit", minPH:6.0, maxPH:7.5, minN:47, minP:29, minK:41, days:240 },
-{ name:"Litchi", type:"fruit", minPH:5.0, maxPH:6.0, minN:42, minP:23, minK:34, days:300 },
-{ name:"Pear", type:"fruit", minPH:6.0, maxPH:7.5, minN:49, minP:31, minK:44, days:230 },
-{ name:"Peach", type:"fruit", minPH:6.2, maxPH:7.0, minN:48, minP:30, minK:43, days:220 },
-{ name:"Cherry", type:"fruit", minPH:6.5, maxPH:7.5, minN:50, minP:32, minK:45, days:200 },
-{ name:"Plum", type:"fruit", minPH:6.0, maxPH:7.0, minN:46, minP:28, minK:39, days:210 },
-{ name:"Kiwi", type:"fruit", minPH:5.5, maxPH:6.5, minN:45, minP:27, minK:38, days:240 },
-{ name:"Fig", type:"fruit", minPH:6.0, maxPH:7.5, minN:44, minP:25, minK:37, days:190 },
-{ name:"Coconut", type:"fruit", minPH:5.0, maxPH:7.0, minN:52, minP:33, minK:48, days:365 },
-{ name:"Date", type:"fruit", minPH:7.0, maxPH:8.0, minN:55, minP:34, minK:49, days:300 },
-{ name:"Apricot", type:"fruit", minPH:6.0, maxPH:7.0, minN:43, minP:26, minK:36, days:210 },
-{ name:"Strawberry", type:"fruit", minPH:5.5, maxPH:6.5, minN:41, minP:24, minK:35, days:120 },
-{ name:"Blueberry", type:"fruit", minPH:4.5, maxPH:5.5, minN:47, minP:28, minK:40, days:180 },
-{ name:"Blackberry", type:"fruit", minPH:5.5, maxPH:6.5, minN:46, minP:27, minK:39, days:150 },
-{ name:"Raspberry", type:"fruit", minPH:5.8, maxPH:6.8, minN:45, minP:26, minK:38, days:150 },
-{ name:"Dragon Fruit", type:"fruit", minPH:6.0, maxPH:7.0, minN:49, minP:30, minK:44, days:210 },
-{ name:"Custard Apple", type:"fruit", minPH:6.0, maxPH:7.5, minN:44, minP:25, minK:37, days:240 },
-{ name:"Jamun", type:"fruit", minPH:5.5, maxPH:7.0, minN:42, minP:23, minK:34, days:260 },
-{ name:"Mulberry", type:"fruit", minPH:6.0, maxPH:7.0, minN:45, minP:28, minK:40, days:200 },
-{ name:"Starfruit", type:"fruit", minPH:5.5, maxPH:6.5, minN:43, minP:24, minK:36, days:210 },
-{ name:"Avocado", type:"fruit", minPH:5.0, maxPH:6.5, minN:50, minP:30, minK:45, days:300 },
-{ name:"Passion Fruit", type:"fruit", minPH:6.0, maxPH:7.0, minN:44, minP:26, minK:38, days:200 },
-
-/* ================= VEGETABLES (30) ================= */
-
-{ name:"Tomato", type:"vegetable", minPH:6.0, maxPH:6.8, minN:50, minP:40, minK:40, days:90 },
-{ name:"Potato", type:"vegetable", minPH:5.2, maxPH:6.4, minN:45, minP:30, minK:35, days:110 },
-{ name:"Carrot", type:"vegetable", minPH:6.0, maxPH:6.5, minN:40, minP:25, minK:30, days:75 },
-{ name:"Onion", type:"vegetable", minPH:6.2, maxPH:6.8, minN:35, minP:25, minK:30, days:95 },
-{ name:"Cabbage", type:"vegetable", minPH:6.0, maxPH:7.0, minN:55, minP:40, minK:40, days:105 },
-{ name:"Spinach", type:"vegetable", minPH:6.5, maxPH:7.5, minN:38, minP:24, minK:28, days:60 },
-{ name:"Broccoli", type:"vegetable", minPH:6.0, maxPH:7.0, minN:52, minP:35, minK:45, days:85 },
-{ name:"Cauliflower", type:"vegetable", minPH:6.0, maxPH:7.5, minN:50, minP:32, minK:42, days:95 },
-{ name:"Radish", type:"vegetable", minPH:5.8, maxPH:6.8, minN:36, minP:22, minK:27, days:50 },
-{ name:"Beetroot", type:"vegetable", minPH:6.0, maxPH:7.0, minN:39, minP:24, minK:30, days:70 },
-{ name:"Capsicum", type:"vegetable", minPH:6.0, maxPH:6.8, minN:48, minP:30, minK:38, days:85 },
-{ name:"Brinjal", type:"vegetable", minPH:5.5, maxPH:6.8, minN:46, minP:28, minK:35, days:100 },
-{ name:"Lettuce", type:"vegetable", minPH:6.0, maxPH:7.0, minN:34, minP:20, minK:25, days:55 },
-{ name:"Pumpkin", type:"vegetable", minPH:6.0, maxPH:7.5, minN:45, minP:28, minK:36, days:120 },
-{ name:"Bottle Gourd", type:"vegetable", minPH:6.0, maxPH:7.0, minN:42, minP:26, minK:32, days:95 },
-{ name:"Bitter Gourd", type:"vegetable", minPH:5.5, maxPH:6.5, minN:41, minP:25, minK:31, days:85 },
-{ name:"Okra", type:"vegetable", minPH:6.0, maxPH:7.5, minN:44, minP:27, minK:34, days:90 },
-{ name:"Peas Veg", type:"vegetable", minPH:6.0, maxPH:7.0, minN:37, minP:22, minK:28, days:80 },
-{ name:"Garlic", type:"vegetable", minPH:6.0, maxPH:7.0, minN:35, minP:23, minK:29, days:120 },
-{ name:"Ginger", type:"vegetable", minPH:5.5, maxPH:6.5, minN:43, minP:26, minK:33, days:240 },
-{ name:"Turmeric", type:"vegetable", minPH:5.5, maxPH:6.8, minN:44, minP:27, minK:34, days:270 },
-{ name:"Cucumber", type:"vegetable", minPH:6.0, maxPH:7.0, minN:40, minP:25, minK:30, days:75 },
-{ name:"Zucchini", type:"vegetable", minPH:6.0, maxPH:7.5, minN:42, minP:26, minK:32, days:80 },
-{ name:"Sweet Corn", type:"vegetable", minPH:5.8, maxPH:6.8, minN:47, minP:29, minK:35, days:90 },
-{ name:"Turnip", type:"vegetable", minPH:6.0, maxPH:7.0, minN:36, minP:22, minK:28, days:60 },
-{ name:"Chili", type:"vegetable", minPH:6.0, maxPH:6.8, minN:45, minP:28, minK:35, days:85 },
-{ name:"Drumstick", type:"vegetable", minPH:6.2, maxPH:7.5, minN:48, minP:30, minK:40, days:180 },
-{ name:"Mint", type:"vegetable", minPH:6.0, maxPH:7.0, minN:32, minP:18, minK:22, days:60 },
-{ name:"Curry Leaf", type:"vegetable", minPH:6.0, maxPH:7.5, minN:39, minP:24, minK:30, days:200 },
-{ name:"Spring Onion", type:"vegetable", minPH:6.0, maxPH:7.0, minN:34, minP:21, minK:27, days:65 }
-
-];
 // ================= DISTRICT GRAPHS =================
 app.get("/district/:name", async (req, res) => {
   try {

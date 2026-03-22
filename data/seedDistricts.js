@@ -1,19 +1,11 @@
+require("dotenv").config({ path: "../.env" });
 const mongoose = require("mongoose");
-const District = require("../models/district"); // lowercase
+const District = require("../models/district");
 
-mongoose.connect("mongodb://127.0.0.1:27017/krishiApp")
-.then(async () => {
-    console.log("✅ MongoDB Connected");
-
-    await District.deleteMany();
-    await District.insertMany(districtData);
-
-    console.log("🚀 District data inserted successfully");
-    mongoose.connection.close();
-})
-.catch(err => console.log(err));
-
+// ✅ STEP 1: DATA FIRST
 const districtData = [
+
+
    {
 district:"Ahmednagar",
 crops:[
@@ -262,3 +254,17 @@ fruits:[
 }
 
 ];
+mongoose.connect(process.env.MONGO_URI)
+.then(async () => {
+  console.log("✅ MongoDB Connected");
+
+  await District.deleteMany(); // optional
+  await District.insertMany(districtData);
+
+  console.log("🚀 District data inserted successfully");
+
+  mongoose.connection.close();
+})
+.catch(err => {
+  console.log("❌ Error:", err);
+});
