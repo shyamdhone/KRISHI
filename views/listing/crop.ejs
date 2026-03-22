@@ -131,46 +131,58 @@ const form = document.getElementById("cropForm");
 const loading = document.getElementById("loading");
 const resultsGrid = document.getElementById("resultsGrid");
 
-/* ✅ DEBUG FIX */
-const districtSelect = document.getElementById("district");
-districtSelect.addEventListener("change", () => {
-  console.log("Selected District:", districtSelect.value);
-});
-
 let npkChart;
 const ITEMS_PER_PAGE = 3;
 
+/* ✅ AUTO-SET BASE URL (IMPORTANT FOR RENDER) */
+const BASE_URL = window.location.origin;
+
 form.addEventListener("submit", async (e)=>{
-e.preventDefault();
+  e.preventDefault();
 
-const formData = new FormData(form);
-const data = Object.fromEntries(formData);
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData);
 
-loading.style.display="block";
-resultsGrid.style.display="none";
+  loading.style.display="block";
+  resultsGrid.style.display="none";
 
-try{
+  try{
 
-const res = await fetch("/crop/data",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
-});
+    const res = await fetch(`${BASE_URL}/crop/data`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(data)
+    });
 
-const result = await res.json();
+    /* ✅ HANDLE SERVER ERROR */
+    if(!res.ok){
+      throw new Error("Server error: "+res.status);
+    }
 
-loading.style.display="none";
-resultsGrid.style.display="grid";
+    const result = await res.json();
 
-renderSoilHealth(data);
-renderChart(data);
-renderResults(result,data.district);
-renderTips(data);
+    console.log("API RESULT:", result); // ✅ DEBUG
 
-}catch(err){
-alert("Error analyzing data: "+err.message);
-loading.style.display="none";
-}
+    /* ❌ IMPORTANT FIX */
+    if(!result.crops || result.crops.length === 0){
+      throw new Error("No crop data returned");
+    }
+
+    loading.style.display="none";
+    resultsGrid.style.display="grid";
+
+    renderSoilHealth(data);
+    renderChart(data);
+    renderResults(result,data.district);
+    renderTips(data);
+
+  }catch(err){
+    console.error(err);
+    alert("❌ Error: "+err.message);
+    loading.style.display="none";
+  }
 
 });
 
@@ -247,7 +259,10 @@ async function renderColumn(items,container,district,type,page=1){
 
 container.innerHTML="";
 
-if(!items || items.length===0) return;
+if(!items || items.length===0){
+  container.innerHTML="<p>No data available</p>";
+  return;
+}
 
 const start=(page-1)*ITEMS_PER_PAGE;
 const end=start+ITEMS_PER_PAGE;
@@ -260,12 +275,7 @@ const matchClass=item.matchPercentage>=85 ? "high" : item.matchPercentage>=65 ? 
 
 const imageName=item.name.toLowerCase().replace(/\s+/g,"-");
 
-let folder=type;
-
-/* ✅ FIXED TYPO */
-if(type==="vegetables") folder="vegetables";
-
-const imagePath=`/images/${folder}/${imageName}`;
+const imagePath=`/images/${type}/${imageName}`;
 
 const card=document.createElement("div");
 card.className="crop-card";

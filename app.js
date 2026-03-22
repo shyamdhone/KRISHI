@@ -497,7 +497,9 @@ app.get("/crop", isLoggedIn, async (req, res) => {
     res.send("Failed to load crop page");
   }
 });
-app.post("/crop/data", isLoggedIn, (req, res) => {
+const cropDatabase = require("./data/crops");
+
+app.post("/crop/data", (req, res) => {
   try {
     const { nitrogen, phosphorus, potassium, ph } = req.body;
 
@@ -506,43 +508,39 @@ app.post("/crop/data", isLoggedIn, (req, res) => {
     const K = Number(potassium);
     const PH = Number(ph);
 
-    // 🔥 UPGRADED Match % Calculation Function
     function calculateMatch(crop) {
       let score = 0;
 
-      /* ================= PH (40%) – gradual & continuous ================= */
-      const idealPH = (crop.minPH + crop.maxPH) / 2;
-      const maxPHDiff = (crop.maxPH - crop.minPH) / 2;
+      const idealPH = (crop.phMin + crop.phMax) / 2;
+      const maxPHDiff = (crop.phMax - crop.phMin) / 2;
 
       const phDiff = Math.abs(PH - idealPH);
 
       let phScore;
 
       if (phDiff <= maxPHDiff) {
-        // Inside range → gradual decrease (always changes with PH)
         phScore = 40 - (phDiff / maxPHDiff) * 10;
       } else {
-        // Outside range → sharper penalty
         phScore = Math.max(0, 30 - phDiff * 15);
       }
 
       score += phScore;
 
-      /* ================= NPK (20% each – continuous) ================= */
-      score += Math.max(0, 20 - Math.abs(N - crop.minN));
-      score += Math.max(0, 20 - Math.abs(P - crop.minP));
-      score += Math.max(0, 20 - Math.abs(K - crop.minK));
+      score += Math.max(0, 20 - Math.abs(N - crop.nitrogenMin));
+      score += Math.max(0, 20 - Math.abs(P - crop.phosphorusMin));
+      score += Math.max(0, 20 - Math.abs(K - crop.potassiumMin));
 
-      return Math.round(score); // ensure visible % change
+      return Math.round(score);
     }
 
-    // 🔥 Add match % to each crop
     const results = cropDatabase.map(crop => ({
       ...crop,
-      matchPercentage: calculateMatch(crop)
+      matchPercentage: calculateMatch(crop),
+      minPH: crop.phMin,
+      maxPH: crop.phMax,
+      days: crop.daysToHarvest
     }));
 
-    // 🔥 Get Top 4 by Category
     const crops = results
       .filter(c => c.type === "crop")
       .sort((a, b) => b.matchPercentage - a.matchPercentage)
@@ -565,7 +563,7 @@ app.post("/crop/data", isLoggedIn, (req, res) => {
     });
 
   } catch (error) {
-    console.error("Crop Data Error:", error);
+    console.error(error);
     res.status(500).json({ error: "Server error" });
   }
 });

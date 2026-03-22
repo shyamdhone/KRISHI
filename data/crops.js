@@ -1,4 +1,5 @@
 module.exports = [
+
   // ===================== CROPS =====================
   { name: "Wheat", type: "crop", minPH: 6, maxPH: 7.5, minN: 50, maxN: 70, minP: 20, maxP: 40, minK: 15, maxK: 35, daysToHarvest: 120, successRate: 85 },
   { name: "Soybean", type: "crop", minPH: 6, maxPH: 7.5, minN: 50, maxN: 65, minP: 15, maxP: 35, minK: 10, maxK: 30, daysToHarvest: 100, successRate: 80 },
@@ -31,5 +32,12 @@ module.exports = [
   { name: "Coriander", type: "vegetable", minPH: 6, maxPH: 7, minN: 30, maxN: 50, minP: 10, maxP: 25, minK: 10, maxK: 20, daysToHarvest: 50, successRate: 85 },
   { name: "Fenugreek", type: "vegetable", minPH: 6, maxPH: 7.5, minN: 25, maxN: 45, minP: 10, maxP: 20, minK: 10, maxK: 20, daysToHarvest: 40, successRate: 88 },
   { name: "Mustard", type: "vegetable", minPH: 6, maxPH: 7, minN: 30, maxN: 50, minP: 10, maxP: 25, minK: 10, maxK: 20, daysToHarvest: 60, successRate: 80 },
-  { name: "Radish", type: "vegetable", minPH: 6, maxPH: 7, minN: 30, maxN: 50, minP: 10, maxP: 25, minK: 10, maxK: 20, daysToHarvest: 40, successRate: 85 }
+  { name: "Radish", type: "vegetable", minPH: 6, maxPH: 7, minN: 30, maxN: 50, minP: 10, maxP: 25, minK: 10, maxK: 20, daysToHarvest: 40, successRate: 85 },
+
+  // ===================== FRUITS =====================
+  { name: "Mango", type: "fruit", minPH: 5.5, maxPH: 7, minN: 50, maxN: 70, minP: 20, maxP: 40, minK: 20, maxK: 40, daysToHarvest: 180, successRate: 85 },
+  { name: "Banana", type: "fruit", minPH: 6, maxPH: 7.5, minN: 60, maxN: 80, minP: 30, maxP: 50, minK: 30, maxK: 50, daysToHarvest: 150, successRate: 90 },
+  { name: "Apple", type: "fruit", minPH: 6, maxPH: 7, minN: 40, maxN: 60, minP: 20, maxP: 40, minK: 20, maxK: 40, daysToHarvest: 200, successRate: 80 },
+  { name: "Orange", type: "fruit", minPH: 5.5, maxPH: 7, minN: 50, maxN: 70, minP: 20, maxP: 40, minK: 20, maxK: 40, daysToHarvest: 180, successRate: 85 }
+
 ];
