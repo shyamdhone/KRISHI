@@ -1,6 +1,6 @@
 require("dotenv").config();
 const Article = require("./models/article");
-const cropDatabase = require("./data/crop");
+const cropDatabase = require("./data/crops");
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 const nodemailer = require("nodemailer");
