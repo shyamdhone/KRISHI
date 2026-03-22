@@ -27,11 +27,19 @@
 
 <div class="input-group full">
 <label>Location (District)</label>
-<select name="district" required>
+
+<!-- ✅ FIXED -->
+<select id="district" name="district" required>
 <option value="">Select District</option>
-<% districts.forEach(d => { %>
-<option value="<%= d.district %>"><%= d.district %></option>
-<% }) %>
+
+<% if (districts && districts.length) { %>
+  <% districts.forEach(d => { %>
+    <option value="<%= d.district %>"><%= d.district %></option>
+  <% }) %>
+<% } else { %>
+  <option value="">No districts available</option>
+<% } %>
+
 </select>
 </div>
 
@@ -69,43 +77,43 @@
 
 <div class="results-grid" id="resultsGrid" style="display:none">
 
-<div class="tile tile-soil-score" data-aos="zoom-in">
+<div class="tile tile-soil-score">
 <p class="tile-label">Soil Health Score</p>
 <div class="health-score"><span id="healthValue">0</span><small>/100</small></div>
 <p id="healthStatus"></p>
 </div>
 
-<div class="tile tile-chart" data-aos="zoom-in" data-aos-delay="100">
+<div class="tile tile-chart">
 <p class="tile-label">Nutrient Composition</p>
 <div class="chart-container">
 <canvas id="npkChart"></canvas>
 </div>
 </div>
 
-<div class="tile tile-best-match" data-aos="fade-up" id="bestCropTile">
+<div class="tile tile-best-match" id="bestCropTile">
 <div id="bestCrop"></div>
 </div>
 
-<div class="tile tile-tips" data-aos="fade-up">
-<h3 style="margin-bottom:15px">🌱 Farming Advice</h3>
-<ul id="tipsList" class="tips-list"></ul>
+<div class="tile tile-tips">
+<h3>🌱 Farming Advice</h3>
+<ul id="tipsList"></ul>
 </div>
 
 <div class="columns-container">
 
 <div class="column">
-<h3 class="col-title">🌾 Best Crops</h3>
-<div id="cropCards" class="card-stack"></div>
+<h3>🌾 Best Crops</h3>
+<div id="cropCards"></div>
 </div>
 
 <div class="column">
-<h3 class="col-title">🍎 Best Fruits</h3>
-<div id="fruitCards" class="card-stack"></div>
+<h3>🍎 Best Fruits</h3>
+<div id="fruitCards"></div>
 </div>
 
 <div class="column">
-<h3 class="col-title">🥕 Best Vegetables</h3>
-<div id="vegetableCards" class="card-stack"></div>
+<h3>🥕 Best Vegetables</h3>
+<div id="vegetableCards"></div>
 </div>
 
 </div>
@@ -123,12 +131,16 @@ const form = document.getElementById("cropForm");
 const loading = document.getElementById("loading");
 const resultsGrid = document.getElementById("resultsGrid");
 
-let npkChart;
+/* ✅ DEBUG FIX */
+const districtSelect = document.getElementById("district");
+districtSelect.addEventListener("change", () => {
+  console.log("Selected District:", districtSelect.value);
+});
 
+let npkChart;
 const ITEMS_PER_PAGE = 3;
 
 form.addEventListener("submit", async (e)=>{
-
 e.preventDefault();
 
 const formData = new FormData(form);
@@ -155,13 +167,9 @@ renderChart(data);
 renderResults(result,data.district);
 renderTips(data);
 
-setTimeout(()=>resultsGrid.scrollIntoView({behavior:"smooth"}),300);
-
 }catch(err){
-
 alert("Error analyzing data: "+err.message);
 loading.style.display="none";
-
 }
 
 });
@@ -254,7 +262,8 @@ const imageName=item.name.toLowerCase().replace(/\s+/g,"-");
 
 let folder=type;
 
-if(type==="vegetables") folder="vegitables";
+/* ✅ FIXED TYPO */
+if(type==="vegetables") folder="vegetables";
 
 const imagePath=`/images/${folder}/${imageName}`;
 
@@ -262,13 +271,11 @@ const card=document.createElement("div");
 card.className="crop-card";
 
 const img=createImage(imagePath);
-
 card.appendChild(img);
 
 const content=document.createElement("div");
 
 content.innerHTML=`
-
 <div class="card-header">
 <span class="tag tag-${matchClass}">
 ${item.matchPercentage}% Match
@@ -285,11 +292,9 @@ ${item.matchPercentage}% Match
 <button class="action-btn" onclick="window.location.href='/district/${district}'">
 Market Trend →
 </button>
-
 `;
 
 card.appendChild(content);
-
 container.appendChild(card);
 
 }
@@ -312,9 +317,7 @@ container.appendChild(btn);
 async function renderResults(data,district){
 
 await renderColumn(data.crops,document.getElementById("cropCards"),district,"crops");
-
 await renderColumn(data.fruits,document.getElementById("fruitCards"),district,"fruits");
-
 await renderColumn(data.vegetables,document.getElementById("vegetableCards"),district,"vegetables");
 
 if(data.crops && data.crops.length>0){
@@ -322,28 +325,21 @@ if(data.crops && data.crops.length>0){
 const best=data.crops[0];
 
 const imageName=best.name.toLowerCase().replace(/\s+/g,"-");
-
 const imagePath=`/images/crops/${imageName}`;
 
 const bestDiv=document.getElementById("bestCrop");
 
 bestDiv.innerHTML=`
-
 <div class="best-badge">TOP MATCH</div>
-
 <h2>${best.name}</h2>
-
 <p>Perfectly suited for your soil nutrients.</p>
-
 <div class="best-stats">
 <span>Yield: High</span> |
 <span>Difficulty: ${best.days>130?"Hard":"Moderate"}</span>
 </div>
-
 `;
 
 const img=createImage(imagePath);
-
 img.style="width:100%;height:200px;object-fit:cover;border-radius:10px;margin-bottom:10px";
 
 bestDiv.prepend(img);
@@ -356,14 +352,9 @@ function renderTips(data){
 
 const tips=[];
 
-if(data.nitrogen<40)
-tips.push("Apply Urea or Nitrogen fertilizer.");
-
-if(data.ph<6)
-tips.push("Soil acidic. Add lime.");
-
-if(data.ph>7.5)
-tips.push("Soil alkaline. Add sulfur.");
+if(data.nitrogen<40) tips.push("Apply Urea or Nitrogen fertilizer.");
+if(data.ph<6) tips.push("Soil acidic. Add lime.");
+if(data.ph>7.5) tips.push("Soil alkaline. Add sulfur.");
 
 tips.push("Practice crop rotation.");
 
