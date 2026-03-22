@@ -1,4 +1,3 @@
-// data/crops.js
 module.exports = [
   { name: "Wheat", phMin: 6, phMax: 7.5, nitrogenMin: 50, daysToHarvest: 120, successRate: 85 },
   { name: "Soybean", phMin: 6, phMax: 7.5, nitrogenMin: 50, daysToHarvest: 100, successRate: 80 },
